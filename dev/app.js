@@ -63,6 +63,7 @@ var main = async function(){
     return {
       artist: item.results[0].tombstone.albums[0].album.artists[0].display_name,
       rating: item.results[0].tombstone.albums[0].rating.rating,
+      albumTitle: item.results[0].tombstone.albums[0].album.display_name,
       genre: item.results[0].genres[0].display_name
     }
   })
