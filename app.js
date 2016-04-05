@@ -139,7 +139,7 @@ var main = function _callee4() {
           });
 
 
-          console.log("Pitchfork Reviews for today: ", report);
+          console.log("Pitchfork Reviews for today:  ", report);
 
         case 10:
         case 'end':
