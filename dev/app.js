@@ -4,6 +4,13 @@ var request = require('request');
 var cheerio = require('cheerio');
 var API = {}
 
+var Hapi = require('hapi')
+var server = new Hapi.Server()
+server.connection({port: 3000})
+
+// ----------------------------
+// FUNCTIONS
+// ----------------------------
 function getPitchfork(){
   return new Promise(function(resolve, reject){
     request('http://pitchfork.com', function(err, resp, body){
@@ -59,17 +66,55 @@ var main = async function(){
     return await API.fetchJSON(item)
   }))
 
-  var report = ReviewsJSON.map((item) => {
-    return {
+  var report = await Promise.all(ReviewsJSON.map(async (item) => {
+    return await {
       artist: item.results[0].tombstone.albums[0].album.artists[0].display_name,
       rating: item.results[0].tombstone.albums[0].rating.rating,
       albumTitle: item.results[0].tombstone.albums[0].album.display_name,
       genre: item.results[0].genres[0].display_name
     }
+  }))
+
+  // console.log("Pitchfork Reviews for today: ", report)
+  return await report
+}
+
+//-----------------------
+// SERVER
+//-----------------------
+
+server.start((err) => {
+  if (err){ throw err }
+  console.log(`Server running at: ${server.info.uri}`)
+})
+
+server.register([require('vision'), require('hapi-async-handler')], (err) => {
+
+  server.views({
+    engines: {
+      html: require('handlebars')
+    },
+    relativeTo: __dirname,
+    path: './templates'
   })
 
-  console.log("Pitchfork Reviews for today: ", report)
-}
+  server.route({
+    method: 'GET',
+    path: '/',
+    handler: {
+      async: async function(request, reply){
+        var theData = await main()
+        reply.view('index.html', {
+          data: theData
+        })
+      }
+    }
+  })
+})
+
+
+
+//-----------------------
 
 main()
 

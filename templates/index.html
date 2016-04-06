@@ -1,0 +1,21 @@
+
+  <div>
+    <table>
+      <thead>
+        <th>Artist</th>
+        <th>Album Title</th>
+        <th>Score</th>
+        <th>Genre</th>
+      </thead>
+      <tbody>
+        {{#each data}}
+          <tr>
+            <td>{{artist}}</td>
+            <td>{{albumTitle}}</td>
+            <td>{{rating}}</td>
+            <td>{{genre}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
